@@ -1,0 +1,30 @@
+{
+  "threshold": 5,
+  "reporters": ["console", "html"],
+  "ignore": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/coverage/**",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/*.d.ts",
+    "**/jest.config.js",
+    "**/tsconfig.json"
+  ],
+  "ignorePattern": [
+    "node_modules",
+    "dist",
+    "coverage",
+    "\\.test\\.",
+    "\\.spec\\.",
+    "\\.d\\.ts$",
+    "jest\\.config",
+    "tsconfig\\.json"
+  ],
+  "format": ["typescript", "javascript"],
+  "minLines": 10,
+  "minTokens": 50,
+  "absolute": true,
+  "output": "./jscpd-report"
+}
+

@@ -1,0 +1,10 @@
+# Ignore known legitimate duplicates
+# Login and Register pages share similar form structures (intentional)
+src/pages/Login.tsx
+src/pages/Register.tsx
+
+# Collections, Routes, and Alerts share similar table/filter patterns (intentional)
+src/pages/Collections.tsx
+src/pages/Routes.tsx
+src/pages/Alerts.tsx
+

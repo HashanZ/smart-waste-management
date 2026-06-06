@@ -1,0 +1,64 @@
+{
+  "name": "smart-waste-management",
+  "version": "1.0.0",
+  "description": "IoT-based Smart Waste Management System",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:ml\" \"npm run dev:web\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:ml": "cd ml-service && python -m uvicorn main:app --reload --port 8001 --host 0.0.0.0",
+    "dev:web": "cd web-dashboard && npm run dev",
+    "build": "npm run build:backend && npm run build:ml && npm run build:web",
+    "build:backend": "cd backend && npm run build",
+    "build:ml": "cd ml-service && pip install -r requirements.txt",
+    "build:web": "cd web-dashboard && npm run build",
+    "test": "npm run test:backend && npm run test:ml && npm run test:web",
+    "test:backend": "cd backend && npm test",
+    "test:ml": "cd ml-service && python -m pytest",
+    "test:web": "cd web-dashboard && npm test",
+    "test:e2e": "cd tests/e2e && npm test",
+    "lint": "npm run lint:backend && npm run lint:web",
+    "lint:backend": "cd backend && npm run lint",
+    "lint:web": "cd web-dashboard && npm run lint",
+    "check:duplicates": "jscpd . --min-lines 5 --min-tokens 50 --config .jscpdrc.json",
+    "check:duplicates:web": "jscpd web-dashboard/src --min-lines 5 --min-tokens 50 --config .jscpdrc.json",
+    "check:duplicates:backend": "jscpd backend/src --min-lines 5 --min-tokens 50 --config .jscpdrc.json",
+    "check:duplicates:report": "jscpd . --min-lines 5 --min-tokens 50 --reporters html --config .jscpdrc.json",
+    "docker:build": "docker-compose build",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "setup": "bash scripts/setup.sh",
+    "train:ml": "cd backend && npm run train:ml",
+    "import:synthetic": "cd backend && npm run import:synthetic",
+    "generate:synthetic": "cd ml-service && python scripts/generate_synthetic_data.py --num_bins=1 --num_days=30"
+  },
+  "keywords": [
+    "iot",
+    "waste-management",
+    "smart-city",
+    "mqtt",
+    "machine-learning",
+    "react",
+    "flutter",
+    "nodejs",
+    "python"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "@jscpd/finder": "^3.5.4",
+    "@jscpd/html-reporter": "^3.5.4",
+    "concurrently": "^8.2.2",
+    "husky": "^8.0.3",
+    "jscpd": "^3.5.4",
+    "neo-async": "^2.6.2"
+  },
+  "workspaces": [
+    "backend",
+    "web-dashboard"
+  ],
+  "dependencies": {
+    "mongodb": "^6.20.0"
+  }
+}

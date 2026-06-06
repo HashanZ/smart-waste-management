@@ -1,0 +1,42 @@
+{
+  "threshold": 0,
+  "reporters": ["html", "console"],
+  "ignore": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/.git/**",
+    "**/coverage/**",
+    "**/*.min.js",
+    "**/*.bundle.js",
+    "**/package-lock.json",
+    "**/yarn.lock",
+    "**/pnpm-lock.yaml",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "**/__tests__/**",
+    "**/__mocks__/**",
+    "**/jest.config.js",
+    "**/tsconfig.json",
+    "**/tailwind.config.js",
+    "**/postcss.config.js",
+    "**/webpack.config.js",
+    "**/Dockerfile",
+    "**/.eslintrc.js",
+    "**/env.example",
+    "**/*.md"
+  ],
+  "format": [
+    "typescript",
+    "javascript",
+    "tsx",
+    "jsx"
+  ],
+  "minLines": 5,
+  "minTokens": 50,
+  "absolute": true,
+  "output": "./.jscpd-report"
+}
+

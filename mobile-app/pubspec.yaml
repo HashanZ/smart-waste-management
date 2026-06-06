@@ -1,0 +1,41 @@
+name: smart_waste_collector
+description: Simple mobile app for waste collectors - view collection routes and mark bins as collected
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+  flutter: ">=3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.6
+
+  # HTTP & API
+  http: ^1.1.2
+
+  # Local Storage
+  shared_preferences: ^2.2.2
+
+  # Maps & Location
+  flutter_map: ^8.2.2
+  latlong2: ^0.9.1
+  geolocator: ^14.0.2
+
+  # Navigation
+  url_launcher: ^6.2.2
+
+  # State Management
+  provider: ^6.1.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true

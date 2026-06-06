@@ -1,0 +1,31 @@
+{
+  "threshold": 5,
+  "reporters": ["console", "html"],
+  "ignore": [
+    "**/node_modules/**",
+    "**/build/**",
+    "**/dist/**",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "**/coverage/**",
+    "**/*.d.ts",
+    "**/public/**"
+  ],
+  "ignorePattern": [
+    "node_modules",
+    "build",
+    "dist",
+    "coverage",
+    "\\.test\\.",
+    "\\.spec\\.",
+    "\\.d\\.ts$"
+  ],
+  "format": ["typescript", "javascript", "tsx", "jsx"],
+  "minLines": 10,
+  "minTokens": 50,
+  "absolute": true,
+  "output": "./jscpd-report"
+}
+

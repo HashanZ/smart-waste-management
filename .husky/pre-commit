@@ -1,0 +1,25 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🔍 Checking for duplicate code..."
+
+# Check frontend duplicates (warns but doesn't block if under 5% threshold)
+cd web-dashboard
+npm run check-duplicates || {
+  echo "⚠️  Duplicate code detected in frontend (over 5% threshold)"
+  echo "   Review the report and refactor if needed: web-dashboard/jscpd-report/html/index.html"
+  echo "   To bypass this check, use: git commit --no-verify"
+  exit 1
+}
+
+# Check backend duplicates
+cd ../backend
+npm run check-duplicates || {
+  echo "⚠️  Duplicate code detected in backend (over 5% threshold)"
+  echo "   Review the report and refactor if needed: backend/jscpd-report/html/index.html"
+  echo "   To bypass this check, use: git commit --no-verify"
+  exit 1
+}
+
+echo "✅ Duplicate code check passed!"
+cd ..

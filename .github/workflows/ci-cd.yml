@@ -1,0 +1,199 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [backend, ml-service, web-dashboard]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      if: matrix.service == 'backend' || matrix.service == 'web-dashboard'
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: ${{ matrix.service }}/package-lock.json
+
+    - name: Set up Python
+      if: matrix.service == 'ml-service'
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        cache: 'pip'
+        cache-dependency-path: ml-service/requirements.txt
+
+    - name: Install dependencies
+      if: matrix.service == 'backend'
+      run: |
+        cd backend
+        npm ci
+
+    - name: Install dependencies
+      if: matrix.service == 'web-dashboard'
+      run: |
+        cd web-dashboard
+        npm ci
+
+    - name: Install dependencies
+      if: matrix.service == 'ml-service'
+      run: |
+        cd ml-service
+        pip install -r requirements.txt
+
+    - name: Run linting
+      if: matrix.service == 'backend'
+      run: |
+        cd backend
+        npm run lint
+
+    - name: Run linting
+      if: matrix.service == 'web-dashboard'
+      run: |
+        cd web-dashboard
+        npm run lint
+
+    - name: Run type checking
+      if: matrix.service == 'backend'
+      run: |
+        cd backend
+        npm run type-check
+
+    - name: Run type checking
+      if: matrix.service == 'web-dashboard'
+      run: |
+        cd web-dashboard
+        npm run type-check
+
+    - name: Run tests
+      if: matrix.service == 'backend'
+      run: |
+        cd backend
+        npm test -- --coverage --watchAll=false
+
+    - name: Run tests
+      if: matrix.service == 'web-dashboard'
+      run: |
+        cd web-dashboard
+        npm test -- --coverage --watchAll=false
+
+    - name: Run tests
+      if: matrix.service == 'ml-service'
+      run: |
+        cd ml-service
+        python -m pytest tests/ --cov=. --cov-report=xml
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Log in to Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Extract metadata
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=sha,prefix={{branch}}-
+          type=raw,value=latest,enable={{is_default_branch}}
+
+    - name: Build and push Backend image
+      uses: docker/build-push-action@v5
+      with:
+        context: ./backend
+        push: true
+        tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/backend:${{ github.sha }}
+        labels: ${{ steps.meta.outputs.labels }}
+
+    - name: Build and push ML Service image
+      uses: docker/build-push-action@v5
+      with:
+        context: ./ml-service
+        push: true
+        tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/ml-service:${{ github.sha }}
+        labels: ${{ steps.meta.outputs.labels }}
+
+    - name: Build and push Web Dashboard image
+      uses: docker/build-push-action@v5
+      with:
+        context: ./web-dashboard
+        push: true
+        tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/web-dashboard:${{ github.sha }}
+        labels: ${{ steps.meta.outputs.labels }}
+
+  deploy-staging:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/develop'
+    environment: staging
+    
+    steps:
+    - name: Deploy to Staging
+      run: |
+        echo "Deploying to staging environment..."
+        # Add your staging deployment commands here
+
+  deploy-production:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    environment: production
+    
+    steps:
+    - name: Deploy to Production
+      run: |
+        echo "Deploying to production environment..."
+        # Add your production deployment commands here
+
+  security-scan:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+
+    - name: Upload Trivy scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v2
+      if: always()
+      with:
+        sarif_file: 'trivy-results.sarif'
+
