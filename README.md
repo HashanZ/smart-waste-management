@@ -1,167 +1,254 @@
 # Smart Waste Management System
 
-A comprehensive IoT-based waste management solution with real-time monitoring, ML-powered predictions, and optimized collection routes.
-## 🏗️ System Architecture
+An IoT-based waste management platform that helps monitor bin levels in real time, predict waste generation, and optimize collection routes. The system combines IoT devices, machine learning, and web technologies to improve collection efficiency and reduce operational costs.
+
+---
+
+## Overview
+
+The system consists of four main components:
+
+* **IoT devices (ESP32)** for collecting waste level data
+* **Backend API** built with Node.js and Express
+* **Machine learning service** for prediction and route optimization
+* **Web dashboard and mobile application** for monitoring and management
+
+---
+
+## Features
+
+* Real-time waste level monitoring
+* Waste generation prediction using machine learning
+* Collection route optimization
+* Interactive web dashboard
+* Mobile application for waste collectors
+* Analytics and reporting
+* Offline support for field operations
+* REST API architecture
+* Docker-based deployment support
+
+---
+
+## System Architecture
 
 ```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   IoT Sensors   │    │   Mobile App    │    │  Web Dashboard  │
-│   (ESP32)       │    │   (Flutter)     │    │   (React.js)    │
-└────────┬────────┘    └────────┬────────┘    └────────┬────────┘
-         │                      │                      │
-         │ MQTT                 │ REST API             │ REST API
-         │                      │                      │
-┌────────▼──────────────────────▼──────────────────────▼────────┐
-│                    Backend Services                          │
-│  ┌─────────────┐  ┌─────────────┐  ┌───────────────────────┐  │
-│  │   Node.js   │  │   Redis     │  │   MongoDB Atlas       │  │
-│  │   Express   │  │   Cache     │  │   Database            │  │
-│  └─────────────┘  └─────────────┘  └───────────────────────┘  │
-└───────────────────────┬───────────────────────────────────────┘
-                        │
-┌───────────────────────▼───────────────────────────────────────┐
-│                ML Microservice                              │
-│  ┌─────────────┐  ┌─────────────┐  ┌───────────────────────┐  │
-│  │  FastAPI    │  │  Scikit-    │  │    OR-Tools           │  │
-│  │  Service    │  │  Learn      │  │  Route Optimization  │  │
-│  └─────────────┘  └─────────────┘  └───────────────────────┘  │
-└───────────────────────────────────────────────────────────────┘
+IoT Sensors (ESP32)
+          │
+         MQTT
+          │
+────────────────────────────────
+        Backend Services
+────────────────────────────────
+ Node.js + Express + MongoDB
+ Redis Cache + Socket.io
+          │
+          │
+────────────────────────────────
+        ML Microservice
+────────────────────────────────
+ FastAPI + Scikit-learn
+ OR-Tools Route Optimization
+          │
+          │
+────────────────────────────────
+      Client Applications
+────────────────────────────────
+ React Web Dashboard
+ Flutter Mobile App
 ```
 
-## 🚀 Quick Start
+---
 
-### Prerequisites
-- Node.js 18+
-- Python 3.9+
-- Flutter SDK
-- MongoDB Atlas account
-- AWS account (for IoT Core)
-- Docker (optional)
+## Tech Stack
 
-### Installation
+### Backend
 
-1. **Clone the repository**
+* Node.js
+* Express.js
+* MongoDB Atlas
+* Redis
+* Socket.io
+
+### Frontend
+
+* React.js
+* TypeScript
+* Tailwind CSS
+* Leaflet.js
+
+### Mobile
+
+* Flutter
+* Dart
+
+### Machine Learning
+
+* Python
+* FastAPI
+* Scikit-learn
+* OR-Tools
+
+### IoT
+
+* ESP32
+* Arduino
+* MQTT
+
+### Cloud and DevOps
+
+* AWS IoT Core
+* Docker
+* GitHub Actions
+
+---
+
+## Project Structure
+
+```text
+smartWasteManagement
+│
+├── backend/             # REST API service
+├── ml-service/          # Machine learning microservice
+├── web-dashboard/       # React frontend
+├── mobile-app/          # Flutter application
+├── iot-device/          # ESP32 firmware
+├── lambda/              # AWS Lambda functions
+├── docs/                # Documentation
+├── scripts/             # Utility scripts
+├── tests/               # End-to-end tests
+├── infrastructure/      # Docker and Nginx configurations
+└── docker-compose.yml
+```
+
+---
+
+## Installation
+
+### Clone the repository
+
 ```bash
-git clone <repository-url>
+git clone https://github.com/your-username/smartWasteManagement.git
+
 cd smartWasteManagement
 ```
 
-2. **Install dependencies**
+### Install dependencies
+
+#### Backend
+
 ```bash
-# Backend
 cd backend
 npm install
+```
 
-# ML Service
+#### Machine Learning Service
+
+```bash
 cd ../ml-service
 pip install -r requirements.txt
+```
 
-# Frontend
-cd ../frontend
+#### Web Dashboard
+
+```bash
+cd ../web-dashboard
 npm install
+```
 
-# Mobile App
-cd ../mobile
+#### Mobile Application
+
+```bash
+cd ../mobile-app
 flutter pub get
 ```
 
-3. **Environment Setup**
-```bash
-# Copy environment files
-cp backend/.env.example backend/.env
-cp ml-service/.env.example ml-service/.env
-cp frontend/.env.example frontend/.env
+---
+
+## Environment Configuration
+
+Create `.env` files for each service and configure the required environment variables.
+
+Example:
+
+```env
+MONGODB_URI=
+JWT_SECRET=
+REDIS_URL=
+AWS_REGION=
+AWS_ACCESS_KEY=
+AWS_SECRET_KEY=
 ```
 
-4. **Start services**
+---
+
+## Running the Project
+
+### Using Docker
+
 ```bash
-# Start all services with Docker Compose
 docker-compose up -d
-
-# Or start individually
-npm run dev:backend
-npm run dev:ml
-npm run dev:frontend
 ```
 
-## 📁 Project Structure
+### Running services individually
 
-```
-smartWasteManagement/
-├── backend/            # Node.js backend API service
-├── ml-service/         # Python ML microservice
-├── web-dashboard/      # React.js web dashboard frontend
-├── mobile-app/         # Flutter mobile application
-├── iot-device/         # ESP32 firmware and hardware configurations
-├── lambda/             # AWS Lambda function code
-├── docs/               # System documentation
-├── scripts/            # Management and helper scripts
-├── tests/              # End-to-end testing (Playwright)
-├── infrastructure/     # Nginx/Docker configurations
-└── docker-compose.yml  # Local multi-service orchestration
-```
-
-## 🛠️ Technology Stack
-
-- **Backend**: Node.js, Express.js, MongoDB, Redis, Socket.io
-- **ML Service**: Python, FastAPI, Scikit-learn, OR-Tools
-- **Frontend**: React.js, TypeScript, TailwindCSS, Leaflet.js
-- **Mobile**: Flutter, Dart
-- **IoT**: ESP32, Arduino, MQTT
-- **Cloud**: AWS IoT Core, MongoDB Atlas
-- **DevOps**: Docker, GitHub Actions
-
-## 📊 Features
-
-- Real-time waste level monitoring
-- ML-powered waste generation prediction
-- Optimized collection route planning
-- Municipal admin dashboard
-- Mobile app for waste collectors
-- Offline-first mobile architecture
-- Comprehensive analytics and reporting
-
-## 🧪 Testing
+Backend
 
 ```bash
-# Run all tests
-npm run test:all
-
-# Backend tests
-cd backend && npm test
-
-# ML service tests
-cd ml-service && pytest
-
-# Frontend tests
-cd frontend && npm test
-
-# E2E tests
-npm run test:e2e
+npm run dev
 ```
 
-## 🚀 Deployment
+ML Service
 
-See [AWS Deployment Guide](docs/deployment.md) for detailed instructions.
+```bash
+uvicorn main:app --reload
+```
 
-## 📚 Documentation
+Frontend
 
-Detailed setup instructions can be found in the [Documentation Index](docs/README.md):
-- [Backend Setup Guide](docs/backend-setup.md)
-- [Database Setup Guide](docs/database-setup.md)
-- [Mobile App Guide](docs/mobile-guide.md)
-- [IoT Setup Guide](docs/iot-setup.md)
-- [ML Model Documentation](docs/ml-models.md)
-- [API Testing Guide](docs/api-testing.md)
+```bash
+npm run dev
+```
 
-## 🤝 Contributing
+---
 
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
+## Applications
 
-## 📄 License
+### Web Dashboard
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Provides administrators with:
+
+* Live waste bin status
+* Collection analytics
+* Route visualization
+* Reports and insights
+
+### Mobile Application
+
+Designed for waste collection personnel:
+
+* View assigned routes
+* Update collection status
+* Access data offline
+* Synchronize automatically when connected
+
+---
+
+## Future Improvements
+
+* Smart notification system
+* Image-based waste classification
+* Predictive maintenance for sensors
+* Multi-city deployment support
+* Role-based access control
+* Real-time alerts
+
+---
+
+## License
+
+This project was developed as an undergraduate software engineering project for research and educational purposes.
+
+ 
+
+ 
+ 
